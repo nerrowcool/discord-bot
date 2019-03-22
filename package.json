@@ -1,0 +1,13 @@
+{
+  "name": "HKJC",
+  "version": "1.0.0",
+  "description": "emulate HKJC football betting",
+  "main": "main.js",
+  "author": "Nerrowcoolll",
+  "dependencies": {
+    "bufferutil": "^4.0.1",
+    "discord.js": "^11.4.2",
+    "mysql": "^2.16.0",
+    "request": "^2.88.0"
+  }
+}
