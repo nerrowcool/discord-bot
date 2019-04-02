@@ -5,24 +5,44 @@ log4js.configure({
 });
 const logger = log4js.getLogger('logger');
 
-const mongoClient = require('mongodb').MongoClient;
-const mongoUri = "mongodb+srv://root:9TpXKo88kq7PNLEE@jc-occro.azure.mongodb.net/JC?retryWrites=true";
-const mongo = new mongoClient(mongoUri, { useNewUrlParser: true, });
+const mysql = require('mysql'); 
+const mysqlConnection = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "jc",
+});
+mysqlConnection.connect(function(err,result) {
+    if (err){
+        logger.error(err);
+        process.kill(process.pid);
+    }
+    logger.info("Database Connected");
+});
 
+var getUser = function (id, callback){
+    var sql = "SELECT * FROM `users` WHERE `userID`="+id+" LIMIT 1";
+    mysqlConnection.query(sql, function(err, result, fields){
+        if (err){
+            logger.error(err);
+        }
+        console.log(JSON.stringify(result[0]));
+        if (callback)
+            callback(result[0]);
+    });
+};
+
+var updateUserCapital = function (id, newAmount, callback){
+    var sql = "UPDATE `users` SET `capital`="+newAmount+" WHERE `userID`="+id;
+    mysqlConnection.query(sql, function(err, result, fields){
+        if (err) throw err;
+        console.log(JSON.stringify(result));
+        callback(result);
+    });
+}
 
 module.exports = {
-    findUser: function (id){
-        var result = "didnot change";
-        mongo.connect((err, database) => {
-            if (err) throw err;
-            database.db("JC").collection("users").find({userID: "1"}).toArray(
-                function (err, abc){
-                    if (err) throw err;
-                    result = JSON.stringify(abc);
-                    console.log("function 1 is returning value now");
-                    return result;
-                }
-            );
-        });
-    },
+    getUser,
+    updateUserCapital,
 };
+
