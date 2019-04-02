@@ -12,7 +12,7 @@ const token = "NTU3NTcwNDAyNjMzNjQ2MTA2.D3YDIw.QT9Fc2ew0uWjDFhvxmJB7L6J1gc";
 const model = require('./model.js');
 
 /****** testing area ******/
-// dailyReward(1);
+// dailyReward(1); 
 /****** testing area ******/
 
 client.on('ready', () => {
