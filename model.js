@@ -4,29 +4,62 @@ const mysql = require('./tools/database.js');
 const db = mysql.mysqlDatabase;
 mysql.mysqlConnect(db);
 
+var logError = function(err){
+    if (err)
+        logger.error(err);
+};
+
+var createUser = function(messageAuthor, callback) {
+    getUser(messageAuthor.discriminator, function(record) {
+        if(!record){
+            var sql = "INSERT INTO `users` SET ?";
+            var data = {
+                            userID: messageAuthor.discriminator,
+                            username: messageAuthor.username,
+                            capital: 200.0,
+                        };
+            db.query(sql, data, function(err, result, fields) {
+                logError(err);
+                callback(result);
+            });
+        } else {
+            record = "exist";
+            callback(record);
+        }
+    });
+};
+
 var getUser = function(id, callback) {
-    var sql = "SELECT * FROM `users` WHERE `userID`="+id+" LIMIT 1";
-    db.query(sql, function(err, result, fields) {
-        if (err)
-            logger.error(err);
-        // console.log(JSON.stringify(result[0]));
-        if (callback)
-            callback(result[0]);
+    var sql = "SELECT * FROM `users` WHERE `userID`=? LIMIT 1";
+    var data = [id];
+    db.query(sql, data, function(err, result, fields) {
+        logError(err);
+        callback(result[0]);
+    });
+};
+
+var getUserByUsername = function(name, callback) {
+    var sql = "SELECT * FROM `users` WHERE `username`=? LIMIT 1";
+    var data = [name];
+    db.query(sql, data, function(err, result, fields) {
+        logError(err);
+        callback(result[0]);
     });
 };
 
 var updateUserCapital = function(id, newAmount, callback) {
-    var sql = "UPDATE `users` SET `capital`="+newAmount+" WHERE `userID`="+id;
-    db.query(sql, function(err, result, fields) {
-        if (err)
-            logger.error(err);
-        // console.log(JSON.stringify(result));
+    var sql = "UPDATE `users` SET `capital`=? WHERE `userID`=?";
+    var data = [newAmount, id];
+    db.query(sql, data, function(err, result, fields) {
+        logError(err);
         callback(result);
     });
-}
+};
 
 module.exports = {
     getUser,
+    getUserByUsername,
     updateUserCapital,
+    createUser,
 };
 
