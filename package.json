@@ -1,7 +1,7 @@
 {
   "name": "HKJC",
   "version": "1.0.0",
-  "description": "emulate HKJC football betting",
+  "description": "emulate HKJC betting",
   "main": "main.js",
   "author": "Nerrowcoolll",
   "dependencies": {
