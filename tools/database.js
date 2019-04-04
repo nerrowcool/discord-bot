@@ -1,4 +1,5 @@
 const logger = require('./logger.js');
+const helper = require('./helper.js');
 
 const mysql = require('mysql'); 
 const mysqlDatabase = mysql.createConnection({
@@ -12,7 +13,7 @@ var mysqlConnect = function(connection) {
     connection.connect(function(err,result) {
         if (err){
             logger.fatal(err);
-            process.kill(process.pid);
+            helper.die();
         }
         logger.trace("Database Connected");
     });
