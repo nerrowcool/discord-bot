@@ -17,10 +17,20 @@ var getMatches = function (number, callback) {
   });
 };
 
+var getMatchByID = function (matchID, callback) {
+  var sql = "SELECT * FROM `matches` WHERE `matchID`=? LIMIT 1";
+  var data = [matchID];
+  db.query(sql, data, function (err, result, fields) {
+    helper.logError(err);
+    if(result.length){
+      callback(result[0]);
+    } else {
+      callback(false);
+    }
   });
 };
 
 module.exports = {
   getMatches,
-
+  getMatchByID,
 }
