@@ -20,7 +20,7 @@ var praseDateInt = function (date) {
 	return parseInt(year + month + day);
 };
 
-var praseDate = function(date) {
+var praseDate = function (date) {
 	var day = date.getDate();
 	var month = date.getMonth() + 1;
 	var year = date.getFullYear();
@@ -37,9 +37,17 @@ var praseDate = function(date) {
 	return `${year}-${month}-${day} ${hour}:${min}`
 }
 
+var isDeveloper = function (userID, developerList) {
+	var exist = developerList.find(function (item) {
+		return item == userID;
+	});
+	return exist ? true : false;
+};
+
 module.exports = {
 	logError,
 	die,
 	praseDateInt,
 	praseDate,
+	isDeveloper,
 };

@@ -30,8 +30,21 @@ var getOptionByMatchIDandType = function (matchID, type, callback) {
 	});
 };
 
+var insertOption = function(type, ratio, callback){
+  var sql = "INSERT INTO `options` SET ?";
+  var data = {
+    matchID: 1,
+    type: type,
+    ratio: ratio,
+  };
+  db.query(sql, data, function (err, result, fields) {
+    helper.logError(err);
+    callback(result);
+  });
+};
+
 module.exports = {
   getOptionByMatchID,
   getOptionByMatchIDandType,
-
+	insertOption,
 };
