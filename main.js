@@ -17,7 +17,6 @@ var prefix = '?';
 bot.on('ready', () => {
 	logger.trace(`Logged in as ${bot.user.tag}!`);
 });
-/* get new command*/
 bot.on('message', (message) => {
 	if (message.author.bot === false) {
 		var content = message.content.split(" ");
@@ -41,12 +40,11 @@ bot.on('message', (message) => {
 					var number = !content[1] ? 5 : content[1];
 					displayMatches(number, message);
 					break;
-
 				case (prefix + "options"): // command: options [matchID]
 					if (content[1]) {
 						displayOptions(content[1], message);
 					} else {
-						message.reply(`match ID missing.\nPlease use ${prefix}matches to check the match ID.`);
+						message.reply(`喂，打漏野啊，係\"${prefix}option [matchID]\"。`);
 					}
 					break;
 					// 	break;
@@ -54,7 +52,7 @@ bot.on('message', (message) => {
 					// 	break;
 
 				default:
-					message.reply("this is not a valid command.");
+					message.reply("其實你知唔知自己講緊乜？");
 					break;
 			}
 		}
@@ -69,7 +67,7 @@ bot.login(botToken);
 // main functions
 function createUser(message) {
 	users.createUser(message.author, function (result) {
-		var resultMessage = result === "exist" ? "your account already exist." : "your account had been successfully created. You have $200 initial capital.";
+		var resultMessage = (result === "exist") ? "你有AC囉喎。" : "你個AC開左啦。依家有$200本金。";
 		message.reply(resultMessage);
 	});
 }
@@ -82,11 +80,11 @@ function dailyReward(userID, message) {
 		var newAmount = (userInfo.capital * 10 + amount) / 10;
 		if (helper.praseDateInt(today) - helper.praseDateInt(userInfo.updated_on) > 0) { // only allow user to get money in alternative day
 			users.updateUserCapital(userID, newAmount, function (result) {
-				message.reply(`you have got \$${amount/10}`);
+				message.reply(`你多左\$${amount / 10}。`);
 				logger.info(`${userInfo.username}got \$${amount}. New amount: \$${newAmount}`);
 			});
 		} else {
-			message.reply("you can only get money once per day. You greedy motherfucker.");
+			message.reply("今日拎左錢啦你。仲想拎？");
 		}
 	});
 }
@@ -94,9 +92,9 @@ function dailyReward(userID, message) {
 function displaySelfStatus(username, message) {
 	users.getUserByUsername(username, function (userInfo) {
 		if (!userInfo) {
-			message.reply("no such user.");
+			message.reply("冇呢條友喎。");
 		} else {
-			var userInfoMessage = `__**${userInfo.username}**__\nmoney: \$${userInfo.capital}`;
+			var userInfoMessage = `__**${userInfo.username}**__\n錢: \$${userInfo.capital}`;
 			message.channel.send(userInfoMessage);
 		}
 	});
@@ -108,29 +106,32 @@ function displayMatches(number, message) {
 		if (result.length > 0) {
 			result.forEach(function (item) {
 				matchesList += `__**${item.matchID}.**__\t__**${item.homeTeam.toUpperCase()} vs. ${item.awayTeam.toUpperCase()}**__\n` +
-					`\t\tDate: ${helper.praseDate(item.date)}\n`;
+					`\t\t日期: ${helper.praseDate(item.date)}\n`;
 				if (item.endded === 1) {
-					matchesList += `\t\tCorners: ${item.corners}\n` +
-						`\t\tResult: ${item.homeFinalScore}-${item.awayFinalScore}(${item.homeHalftimeScore}-${item.awayHalftimeScore})\n`;
+					matchesList += `\t\t角球: ${item.corners}\n` +
+						`\t\t比數: ${item.homeFinalScore}-${item.awayFinalScore}(${item.homeHalftimeScore}-${item.awayHalftimeScore})\n`;
 				}
 			});
 			message.channel.send(matchesList);
 		} else {
-			message.reply("no matches found.");
+			message.reply("揾唔到野喎。");
 		}
 	});
 }
 
 function displayOptions(matchID, message) {
-	options.getOptionByMatchID(matchID, function(result) {
+	options.getOptionByMatchID(matchID, function (result) {
 		var optionsList = "";
-		if (result.length > 0) {
+		if (result) {
 			result.forEach(function (item) {
-				optionsList += `__**${item.type}**__\nRatio: ${item.ratio}\n`;
+				optionsList += `__**${item.type}**__\n賠率: ${item.ratio}\n`;
 			});
 			message.channel.send(optionsList);
 		} else {
-			message.reply("no betting options found.");
+			message.reply("都唔知你買乜柒！");
+		}
+	});
+}
 		}
 	});
 }
