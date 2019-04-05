@@ -7,6 +7,7 @@ const helper = require("./tools/helper.js");
 const users = require('./models/users.js');
 const options = require('./models/options.js');
 const matches = require('./models/matches.js');
+const bets = require('./models/bets.js');
 
 const Discord = require('discord.js');
 const botToken = require('./secret.js');
@@ -47,10 +48,13 @@ bot.on('message', (message) => {
 						message.reply(`喂，打漏野啊，係\"${prefix}option [matchID]\"。`);
 					}
 					break;
-					// 	break;
-					// case (prefix + "bet"): // command: bet [matchID] [type] [amount]
-					// 	break;
-
+				case (prefix + "bet"): // command: bet [matchID] [type] [amount]
+					placeBet(content[1], content[2], content[3], message);
+					// if(content[1] && content[2] && content[3]) {
+					// } else {
+					// 	message.reply(`please use \"${prefix}bet [match ID] [type] [amount]\" to place your bet.`);
+					// }
+					break;
 				default:
 					message.reply("其實你知唔知自己講緊乜？");
 					break;
@@ -132,6 +136,35 @@ function displayOptions(matchID, message) {
 		}
 	});
 }
+
+function placeBet(matchID, type, amount, message) {
+	users.getUser(message.author.discriminator, function (user) {
+		if (user.capital >= amount) {
+			matches.getMatchByID(matchID, function (match) {
+				if (match) {
+					if (!match.endded) {
+						options.getOptionByMatchIDandType(matchID, type, function (option) {
+							if (option) {
+								bets.insertBet(matchID, type, amount, message, function(result){
+									if(result){
+										message.reply("幫你買左啦。");
+									} else {
+										message.reply("唔知搞咩落唔到注。");
+									}
+								});
+							} else {
+								message.reply("你買咩啊...");
+							}
+						});
+					} else {
+						message.reply("一早完左啦場波。");
+					}
+				} else {
+					message.reply("邊有呢場波啊？");
+				}
+			});
+		} else {
+			message.reply("冇錢就咪買波啦！死窮鬼！");
 		}
 	});
 }
