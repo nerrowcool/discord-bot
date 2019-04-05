@@ -30,7 +30,11 @@ var getUser = function (id, callback) {
 	var data = [id];
 	db.query(sql, data, function (err, result, fields) {
 		helper.logError(err);
-		callback(result[0]);
+		if(result.length){
+			callback(result[0]);
+		} else {
+			callback(false);
+		}
 	});
 };
 
@@ -39,7 +43,11 @@ var getUserByUsername = function (name, callback) {
 	var data = [name];
 	db.query(sql, data, function (err, result, fields) {
 		helper.logError(err);
-		callback(result[0]);
+		if(result.length){
+			callback(result[0]);
+		} else {
+			callback(false);
+		}
 	});
 };
 

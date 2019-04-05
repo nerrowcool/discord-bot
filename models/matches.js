@@ -9,7 +9,14 @@ var getMatches = function (number, callback) {
   var data = [number];
   db.query(sql, data, function (err, result, fields) {
     helper.logError(err);
-    callback(result);
+    if(result.length){
+			callback(result);
+		} else {
+			callback(false);
+		}
+  });
+};
+
   });
 };
 

@@ -9,16 +9,24 @@ var getOptionByMatchID = function (matchID, callback) {
 	var data = [matchID];
 	db.query(sql, data, function (err, result, fields) {
 		helper.logError(err);
-		callback(result);
+		if(result.length){
+			callback(result);
+		} else {
+			callback(false);
+		}
 	});
 };
 
-var getOptionByMatchIDandType = function (matchID, type) {
-	var sql = "SELECT * FROM `options` WHERE `matchID`=? AND `type`=?";
+var getOptionByMatchIDandType = function (matchID, type, callback) {
+	var sql = "SELECT * FROM `options` WHERE `matchID`=? AND `type`=? LIMIT 1";
 	var data = [matchID, type];
 	db.query(sql, data, function (err, result, fields) {
 		helper.logError(err);
-		callback(result);
+		if(result.length){
+			callback(result[0]);
+		} else {
+			callback(false);
+		}
 	});
 };
 
