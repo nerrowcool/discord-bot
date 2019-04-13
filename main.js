@@ -14,16 +14,26 @@ const botToken = require('./secret.js');
 const bot = new Discord.Client();
 
 var prefix = '?';
-var typeZhtoEn = {
-	主勝: "homeWin",
-	客勝: "awayWin",
-	和: "draw",
-};
-var typeEntoZh = {
-	homeWin: "主勝",
-	awayWin: "客勝",
-	draw: "和",
-};
+var typeZh = [
+	"",	// 0
+	"半場主勝",	// 1
+	"半場客勝",	// 2
+	"半場和",	// 3
+	"全場主勝",	// 4
+	"全場客勝",	// 5
+	"全場和",	// 6
+	"半場主隊波膽",	// 7
+	"半場客隊波膽",	// 8
+	"全場主隊波膽",	// 9
+	"全場客隊波膽",	// 10
+	"半場波膽",	// 11
+	"全場波膽",	// 12
+	"半場入球細",	// 13
+	"半場入球大",	// 14
+	"全場入球細",	// 15
+	"全場入球大",	// 16
+	"角球大",	// 17
+];
 var commandList = [
 	prefix + "help",
 	prefix + "money",
@@ -70,7 +80,9 @@ bot.on('message', (message) => {
 					displayOptions(content[1], message);
 					break;
 				case (commandList[4]): // command: bet [matchID] [type] [amount]
-					placeBet(content[1], typeZhtoEn[content[2]], content[3], message);
+					if(content[1] && content[2] && content[3]){
+						placeBet(content[1], typeZh.indexOf(content[2]), content[3], message);
+					}
 					break;
 				case (commandList[5]): // command: profile [username(optional)]
 					var profile = !content[1] ? username : content[1];
@@ -172,8 +184,9 @@ function displayOptions(matchID, message) {
 			var optionsList = "";
 			if (result) {
 				result.forEach(function (item) {
-					if (typeEntoZh[item.type])
-						optionsList += `__**${typeEntoZh[item.type]}**__\n賠率: ${item.ratio}\n`;
+					if (typeZh[item.type] && item.ratio){
+						optionsList += `__**${typeZh[item.type]}**__\n賠率: ${item.ratio}\n`;
+					}
 				});
 				if (optionsList) {
 					message.channel.send(optionsList);
@@ -201,6 +214,9 @@ function placeBet(matchID, type, amount, message) {
 									bets.insertBet(matchID, type, amount, message, function (result) {
 										if (result) {
 											message.reply("幫你買左啦。");
+											users.updateUserCapital(message.author.discriminator, user.capital-amount, function(){
+												return true;
+											});
 										} else {
 											message.reply("唔知搞咩落唔到注。");
 										}
