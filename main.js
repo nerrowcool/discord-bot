@@ -47,10 +47,10 @@ var commandList = [
 var commandHelpMessage = [
 	":\tdisplay this help message",
 	":\tget daily rewatd",
-	"[number(optional)]:\tdisplay available matches for betting",
-	"[match ID]:\tdisplay available betting options for a match",
-	"[match ID] [option] [amount]:\tplace a bet",
-	"[username(optional)]:\tdisplay the profile of a user account",
+	" [number(optional)]:\tdisplay available matches for betting",
+	" [match ID]:\tdisplay available betting options for a match",
+	" [match ID] [option] [amount]:\tplace a bet",
+	" [username(optional)]:\tdisplay the profile of a user account",
 	":\tcreate a new account \*only one account per user",
 ];
 var developerlist = [4791,];
@@ -185,7 +185,11 @@ function displayOptions(matchID, message) {
 			if (result) {
 				result.forEach(function (item) {
 					if (typeZh[item.type] && item.ratio){
-						optionsList += `__**${typeZh[item.type]}**__\n賠率: ${item.ratio}\n`;
+						if (item.special_requirement){
+							optionsList += `__**${typeZh[item.type]}(${item.special_requirement})**__\n賠率: ${item.ratio}\n`;
+						} else {
+							optionsList += `__**${typeZh[item.type]}**__\n賠率: ${item.ratio}\n`;
+						}
 					}
 				});
 				if (optionsList) {
